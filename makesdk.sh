@@ -5,7 +5,8 @@
 set -e
 indir="$(xcrun --show-sdk-path)"
 indirios="$(xcrun --sdk iphoneos --show-sdk-path)"
-outdir="$PWD/MacOSX.sdk"
+# Metal checks for "MacOSX.platform" in the path
+outdir="$PWD/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 # TODO(zhuowei): copy the .o and .a files from iOS
 
@@ -16,6 +17,7 @@ then
 
 echo "Deleting and recopying $outdir"
 rm -rf "$outdir" || true
+mkdir -p "$(dirname "$outdir")"
 cp -ac "$indir" "$outdir"
 echo "Copying some iOS files over"
 pathstocopy="
