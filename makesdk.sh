@@ -38,12 +38,12 @@ echo "Editing tbd files"
 for tbdfile in $(find "$outdir" -name "*.tbd" -type f)
 do
 	# Yes I know this should be done with a real YAML parser
-	sed -e "s/archs:           \\[ x86_64/archs:           \\[ arm64e/g" \
-	-e "s/uuids:           \\[ 'x86_64/uuids:           \\[ 'arm64e/g" \
+	sed -e "s/archs:           \\[ x86_64/archs:           \\[ arm64/g" \
+	-e "s/uuids:           \\[ 'x86_64/uuids:           \\[ 'arm64/g" \
 	-i "" "$tbdfile"
 done
 
-sed -e "s/x86_64/arm64e/g" -i "" "$outdir/SDKSettings.json"
+sed -e "s/x86_64/arm64/g" -i "" "$outdir/SDKSettings.json"
 
 fi # if $recopy
 
@@ -78,17 +78,17 @@ LC_ALL=C sed -e "s/if TARGET_CPU_PPC || TARGET_CPU_X86 || TARGET_CPU_PPC64 || TA
 
 echo "Editing Swift modules"
 
-# Edit Swift modules to specify arm64e.
+# Edit Swift modules to specify arm64.
 
 for filepath in $(find "$outdir/usr/lib/swift" -name "x86_64.swiftinterface" -type f) \
 $(find "$outdir/System/Library" -name "x86_64.swiftinterface" -type f)
 do
-	sed -e "s/-target x86_64-apple-macosx10.15/-target arm64e-apple-macosx10.15/" \
-		-e "s/-target x86_64-apple-macos10.15/-target arm64e-apple-macos10.15/" \
-		"$filepath" >"$(dirname "$filepath")/arm64e.swiftinterface"
+	sed -e "s/-target x86_64-apple-macosx10.15/-target arm64-apple-macosx10.15/" \
+		-e "s/-target x86_64-apple-macos10.15/-target arm64-apple-macos10.15/" \
+		"$filepath" >"$(dirname "$filepath")/arm64.swiftinterface"
 done
-python removeonefloat80.py "$outdir/usr/lib/swift/CoreGraphics.swiftmodule/arm64e.swiftinterface" \
-	"$outdir/usr/lib/swift/CoreGraphics.swiftmodule/arm64e.swiftinterface" 3
+python removeonefloat80.py "$outdir/usr/lib/swift/CoreGraphics.swiftmodule/arm64.swiftinterface" \
+	"$outdir/usr/lib/swift/CoreGraphics.swiftmodule/arm64.swiftinterface" 3
 
 # Replace some Swift modules with the iOS equivalents
 
@@ -96,6 +96,6 @@ for filepath in usr/lib/swift/Swift.swiftmodule \
 	usr/lib/swift/SwiftOnoneSupport.swiftmodule \
 	usr/lib/swift/Darwin.swiftmodule
 do
-	sed -e "s/-target arm64e-apple-ios13.0/-target arm64e-apple-macosx10.15/" \
-		"$indirios/$filepath/arm64e.swiftinterface" >"$outdir/$filepath/arm64e.swiftinterface"
+	sed -e "s/-target arm64-apple-ios13.0/-target arm64-apple-macosx10.15/" \
+		"$indirios/$filepath/arm64.swiftinterface" >"$outdir/$filepath/arm64.swiftinterface"
 done
